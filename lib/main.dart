@@ -1,5 +1,8 @@
-import 'package:craftworks_app/core/constants/app_fonts.dart';
+import 'Client/signup.dart';
 import 'package:flutter/material.dart';
+import 'client/login.dart';
+import 'Client/forgetPass.dart';
+import 'core/constants/app_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -8,103 +11,273 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Crafworks',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        fontFamily: AppFonts.primaryFont,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const OnboardingScreen(),
+        '/login': (context) => const LoginScreen(),
+        '/forgetpass': (context) => const ForgetPasswordScreen(),
+        '/signup': (context) => const SignUp(),
+      },
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class OnboardingScreen extends StatefulWidget {
+  const OnboardingScreen({Key? key}) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _OnboardingScreenState extends State<OnboardingScreen> {
+  final PageController _controller = PageController();
+  int _currentPage = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  final List<_OnboardingPageData> _pages = [
+    _OnboardingPageData(
+      image: 'assets/images/Draw.png',
+
+      title: 'Empowerment',
+      description:
+          'Discover new opportunities and take control of your freelance journey with our powerful search and match capabilities.',
+      buttonText: 'Next',
+    ),
+    _OnboardingPageData(
+      image: 'assets/images/imageboarding2.png',
+      title: 'Connectivity',
+      description:
+          'Easily find and communicate with clients, manage projects, and build lasting professional relationships.',
+      buttonText: 'Next',
+    ),
+    _OnboardingPageData(
+      image: 'assets/images/imageboarding3.png',
+      title: 'Security',
+      description:
+          'Experience seamless transactions with our secure payment system, ensuring you get paid on time, every time.',
+      buttonText: 'Next',
+    ),
+    _OnboardingPageData(
+      image: 'assets/images/imageboarding4.png',
+      title: 'Start your Career with us',
+      description:
+          'Start your career with us today. Connect with opportunities and success awaits. Let\'s begin now!',
+      buttonText: 'Finish',
+    ),
+    _OnboardingPageData(
+      image: 'assets/images/imageboarding5.png',
+      title: '',
+      description:
+          'We provide you with the fastest, most secure, and highest quality services possible. Your satisfaction is our priority.',
+      buttonText: 'Start',
+    ),
+  ];
+
+  void _onNext() {
+    if (_currentPage < _pages.length - 1) {
+      _controller.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      Navigator.pushReplacementNamed(context, '/login');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+      backgroundColor: AppColors.background,
+      body: SafeArea(
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+          children: [
+            Expanded(
+              child: PageView.builder(
+                controller: _controller,
+                itemCount: _pages.length,
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentPage = index;
+                  });
+                },
+                itemBuilder: (context, index) {
+                  final page = _pages[index];
+                  return _OnboardingPage(
+                    data: page,
+                    isLast: index == _pages.length - 1,
+                    onNext: _onNext,
+                  );
+                },
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(_pages.length, (index) {
+                return Container(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 3,
+                    vertical: 12,
+                  ),
+                  width: 16,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: _currentPage == index
+                        ? AppColors.primary
+                        : AppColors.foreground,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                );
+              }),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class _OnboardingPageData {
+  final String image;
+  final String title;
+  final String description;
+  final String buttonText;
+
+  const _OnboardingPageData({
+    required this.image,
+    required this.title,
+    required this.description,
+    required this.buttonText,
+  });
+}
+
+class _OnboardingPage extends StatelessWidget {
+  final _OnboardingPageData data;
+  final bool isLast;
+  final VoidCallback onNext;
+
+  const _OnboardingPage({
+    Key? key,
+    required this.data,
+    required this.isLast,
+    required this.onNext,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 32),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              children: [
+                Expanded(
+                  child: Center(
+                    child: Container(
+                      margin: const EdgeInsets.all(20),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(24),
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: AppColors.primary.withOpacity(0.2),
+                              width: 2,
+                            ),
+                          ),
+                          child: Image.asset(
+                            data.image,
+                            width: 200,
+                            height: 200,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Container(
+                                  width: 120,
+                                  height: 120,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Icon(
+                                    Icons.image,
+                                    size: 60,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: AppColors.card,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(32),
+                    ),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 32,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      if (data.title.isNotEmpty)
+                        Text(
+                          data.title,
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.foreground,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      const SizedBox(height: 16),
+                      Text(
+                        data.description,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: AppColors.foreground,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 24),
+                      if (data.buttonText.isNotEmpty)
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                            ),
+                            onPressed: onNext,
+                            child: Text(
+                              data.buttonText,
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: AppColors.primaryForeground,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
