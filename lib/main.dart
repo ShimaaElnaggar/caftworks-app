@@ -1,3 +1,4 @@
+import 'package:craftworks_app/core/constants/app_fonts.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Crafworks',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        fontFamily: 'Roboto',
+        fontFamily: AppFonts.primaryFont,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
