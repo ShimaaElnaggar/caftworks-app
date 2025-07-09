@@ -15,4 +15,7 @@ abstract class PreferencesServices {
   static bool? getBool(String key) => prefs!.getBool(key);
   static Future<bool> setBool(String key, bool value) =>
       prefs!.setBool(key, value);
+  static String? getString(String key) => prefs!.getString(key);
+  static Future<bool> setString(String key, String value) =>
+      prefs!.setString(key, value);
 }

@@ -1,5 +1,8 @@
 import 'package:craftworks_app/core/constants/app_theme.dart';
+import 'package:craftworks_app/l10n/app_localizations.dart';
+import 'package:craftworks_app/providers/language_provider.dart';
 import 'package:craftworks_app/providers/theme_provider.dart';
+import 'package:craftworks_app/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -30,6 +33,7 @@ class _LanguageThemeToggleViewState extends State<LanguageThemeToggleView> {
   @override
   Widget build(BuildContext context) {
     final themeProv = Provider.of<ThemeProvider>(context);
+    final langProv = Provider.of<LanguageProvider>(context);
     final isDark = _isDarkMode ?? false;
 
     return Scaffold(
@@ -90,7 +94,7 @@ class _LanguageThemeToggleViewState extends State<LanguageThemeToggleView> {
                       const SizedBox(width: 8),
                       Switch.adaptive(
                         value: isDark,
-                        activeColor: Colors.blue,
+                        activeColor: AppColors.primary,
                         onChanged: (val) {
                           themeProv.toggleTheme(val);
                           setState(() {
@@ -101,20 +105,18 @@ class _LanguageThemeToggleViewState extends State<LanguageThemeToggleView> {
                     ],
                   ),
                 ),
-
                 const Spacer(),
-
                 Center(
                   child: Column(
                     children: [
                       Icon(
                         Icons.home_repair_service,
                         size: 100,
-                        color: isDark ? Colors.white : Colors.blueAccent,
+                        color: isDark ? Colors.white : AppColors.primary,
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        'CraftWorks',
+                        AppLocalizations.of(context)!.appTitle,
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
@@ -125,6 +127,35 @@ class _LanguageThemeToggleViewState extends State<LanguageThemeToggleView> {
                   ),
                 ),
                 const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      CustomElevatedButton(
+                        onPressed: () async {
+                          await langProv.setLanguage('ar');
+                        },
+                        backgroundColor: isDark
+                            ? Colors.white10
+                            : AppColors.primary,
+                        color: isDark ? Colors.white : Colors.white,
+                        text: AppLocalizations.of(context)!.arabic,
+                      ),
+                      CustomElevatedButton(
+                        onPressed: () async {
+                          await langProv.setLanguage('en');
+                        },
+                        backgroundColor: isDark
+                            ? Colors.white10
+                            : AppColors.primary,
+                        color: isDark ? Colors.white : Colors.white,
+                        text: AppLocalizations.of(context)!.english,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 32),
               ],
             ),
           ),
