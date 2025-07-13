@@ -1,3 +1,5 @@
+import 'package:craftworks_app/Client/home.dart';
+
 import 'Client/signup.dart';
 import 'package:flutter/material.dart';
 import 'client/login.dart';
@@ -20,6 +22,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/forgetpass': (context) => const ForgetPasswordScreen(),
         '/signup': (context) => const SignUp(),
+        '/home':(context) => const HomeScreen(),
       },
     );
   }

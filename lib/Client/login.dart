@@ -51,6 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final emailError = _validateEmail(_emailController.text);
     final passwordError = _validatePassword(_passwordController.text);
     
+    
     setState(() {
       _emailError = emailError;
       _passwordError = passwordError;
@@ -67,6 +68,8 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: AppColors.destructive,
       ),
     );
+    // Navigate to HomeScreen after successful login
+    Navigator.pushReplacementNamed(context, '/home');
   }
 
   @override
