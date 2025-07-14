@@ -1,9 +1,10 @@
 import 'package:craftworks_app/l10n/app_localizations.dart';
+import 'package:craftworks_app/views/choose_user_type_view.dart';
+import 'package:craftworks_app/views/language_theme_toggle_view.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:craftworks_app/providers/language_provider.dart';
 import 'package:craftworks_app/providers/theme_provider.dart';
 import 'package:craftworks_app/services/preferences_services.dart';
-import 'package:craftworks_app/views/language_theme_toggle_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -59,7 +60,11 @@ class MyApp extends StatelessWidget {
         }
         return supportedLocales.first;
       },
-      home: LanguageThemeToggleView(),
+      initialRoute: '/language_theme',
+      routes: {
+        '/language_theme': (context) => LanguageThemeToggleView(),
+        '/choose_user': (context) => ChooseUserTypeView(),
+      },
     );
   }
 }
