@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/constants/app_theme.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
-  const ForgetPasswordScreen({Key? key}) : super(key: key);
+  const ForgetPasswordScreen({super.key});
 
   @override
   State<ForgetPasswordScreen> createState() => _ForgetPasswordScreenState();
@@ -112,11 +112,11 @@ class _ContactSelectionScreen extends StatelessWidget {
   final VoidCallback onNext;
 
   const _ContactSelectionScreen({
-    Key? key,
+    super.key,
     required this.selectedMethod,
     required this.onSelect,
     required this.onNext,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -231,14 +231,14 @@ class _ContactOption extends StatelessWidget {
   final VoidCallback onTap;
 
   const _ContactOption({
-    Key? key,
+    super.key,
     required this.icon,
     required this.label,
     required this.detail,
     required this.value,
     required this.selected,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -286,13 +286,13 @@ class _OtpScreen extends StatelessWidget {
   final VoidCallback onVerify;
 
   const _OtpScreen({
-    Key? key,
+    super.key,
     required this.email,
     required this.timer,
     required this.onResend,
     required this.onOtpChanged,
     required this.onVerify,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -349,7 +349,7 @@ class _OtpInputField extends StatefulWidget {
   final int length;
   final ValueChanged<String> onChanged;
 
-  const _OtpInputField({Key? key, required this.length, required this.onChanged}) : super(key: key);
+  const _OtpInputField({super.key, required this.length, required this.onChanged});
 
   @override
   State<_OtpInputField> createState() => _OtpInputFieldState();

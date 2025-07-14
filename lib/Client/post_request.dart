@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_theme.dart';
-import 'package:geolocator/geolocator.dart';
+
 
 class PostRequestPage extends StatefulWidget {
-  const PostRequestPage({Key? key}) : super(key: key);
+  const PostRequestPage({super.key});
 
   @override
   State<PostRequestPage> createState() => _PostRequestPageState();
@@ -92,7 +92,10 @@ class _PostRequestPageState extends State<PostRequestPage> {
                         },
                         child: const Text(
                           'Change Location',
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -164,13 +167,16 @@ class _PostRequestPageState extends State<PostRequestPage> {
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
               ),
               items: _services
-                  .map((service) => DropdownMenuItem(
-                        value: service,
-                        child: Text(service),
-                      ))
+                  .map(
+                    (service) =>
+                        DropdownMenuItem(value: service, child: Text(service)),
+                  )
                   .toList(),
               onChanged: (value) {
                 setState(() {
@@ -240,20 +246,27 @@ class _PostRequestPageState extends State<PostRequestPage> {
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        prefixIcon: icon != null ? Icon(icon, color: AppColors.primaryLight) : null,
+        prefixIcon: icon != null
+            ? Icon(icon, color: AppColors.primaryLight)
+            : null,
         filled: true,
         fillColor: AppColors.cardLight,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
       ),
     );
   }
 
   Future<void> _showLocationDialog() async {
-    final TextEditingController dialogController = TextEditingController(text: _addressController.text);
+    final TextEditingController dialogController = TextEditingController(
+      text: _addressController.text,
+    );
     bool isLoading = false;
     await showDialog(
       context: context,
@@ -280,19 +293,35 @@ class _PostRequestPageState extends State<PostRequestPage> {
                           onPressed: () async {
                             setState(() => isLoading = true);
                             try {
-                              LocationPermission permission = await Geolocator.checkPermission();
+                              LocationPermission permission =
+                                  await Geolocator.checkPermission();
                               if (permission == LocationPermission.denied) {
-                                permission = await Geolocator.requestPermission();
+                                permission =
+                                    await Geolocator.requestPermission();
                               }
-                              if (permission == LocationPermission.deniedForever || permission == LocationPermission.denied) {
+                              if (permission ==
+                                      LocationPermission.deniedForever ||
+                                  permission == LocationPermission.denied) {
                                 setState(() => isLoading = false);
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Location permission denied')));
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Location permission denied'),
+                                  ),
+                                );
                                 return;
                               }
-                              Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-                              dialogController.text = 'Lat:  A${position.latitude}, Lng: ${position.longitude}';
+                              Position position =
+                                  await Geolocator.getCurrentPosition(
+                                    desiredAccuracy: LocationAccuracy.high,
+                                  );
+                              dialogController.text =
+                                  'Lat:  A${position.latitude}, Lng: ${position.longitude}';
                             } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to get location: $e')));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Failed to get location: $e'),
+                                ),
+                              );
                             }
                             setState(() => isLoading = false);
                           },
@@ -330,4 +359,4 @@ class _PostRequestPageState extends State<PostRequestPage> {
     _priceController.dispose();
     super.dispose();
   }
-} 
+}

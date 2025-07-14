@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/constants/app_theme.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -304,7 +304,7 @@ class _CustomTextField extends StatelessWidget {
   final Function(String)? onChanged;
 
   const _CustomTextField({
-    Key? key,
+    super.key,
     required this.controller,
     required this.hintText,
     this.prefixIcon,
@@ -312,7 +312,7 @@ class _CustomTextField extends StatelessWidget {
     this.obscureText = false,
     this.errorText,
     this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -365,7 +365,7 @@ class _SocialButton extends StatelessWidget {
   final String asset;
   final VoidCallback onTap;
 
-  const _SocialButton({Key? key, required this.asset, required this.onTap}) : super(key: key);
+  const _SocialButton({super.key, required this.asset, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
