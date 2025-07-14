@@ -38,6 +38,11 @@ class AppColors {
   static const ring = Color(0xFF939DFF);
 
   // LIGHT
+  static final glowBlue = BoxShadow(
+    color: Colors.blue.withOpacity(0.3),
+    blurRadius: 100,
+    spreadRadius: 100,
+  );
   static const backgroundLight = Color(0xFFFBFBFB);
   static const foregroundLight = Color(0xFF464646);
   static const mutedLight = Color(0xFFF7F7F7);
