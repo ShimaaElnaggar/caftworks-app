@@ -37,18 +37,48 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final languageProvider = Provider.of<LanguageProvider>(context);
     return MaterialApp(
-      initialRoute: '/',
+      debugShowCheckedModeBanner: false,
+      title: 'Crafworks',
+      themeMode: Provider.of<ThemeProvider>(context).themeMode,
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        fontFamily: languageProvider.fontFamily,
+      ),
+
+      theme: ThemeData(
+        brightness: Brightness.light,
+        fontFamily: languageProvider.fontFamily,
+      ),
+      locale: languageProvider.locale,
+      supportedLocales: const [Locale('en'), Locale('ar')],
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      localeResolutionCallback: (locale, supportedLocales) {
+        if (locale == null) return supportedLocales.first;
+        for (var supportedLocale in supportedLocales) {
+          if (supportedLocale.languageCode == locale.languageCode) {
+            return supportedLocale;
+          }
+        }
+        return supportedLocales.first;
+      },
+      initialRoute: '/signup',
       routes: {
         '/': (context) => const OnboardingScreen(),
         '/login': (context) => const LoginScreen(),
         '/forgetpass': (context) => const ForgetPasswordScreen(),
         '/signup': (context) => const SignUp(),
-        '/home':(context) => const HomeScreen(),
+        '/home': (context) => const HomeScreen(),
+        '/language_theme': (context) => LanguageThemeToggleView(),
+        '/choose_user': (context) => ChooseUserTypeView(),
       },
     );
   }
 }
-
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({Key? key}) : super(key: key);
@@ -302,40 +332,6 @@ class _OnboardingPage extends StatelessWidget {
           ),
         ),
       ],
-      debugShowCheckedModeBanner: false,
-      title: 'Crafworks',
-      themeMode: Provider.of<ThemeProvider>(context).themeMode,
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        fontFamily: languageProvider.fontFamily,
-      ),
-
-      theme: ThemeData(
-        brightness: Brightness.light,
-        fontFamily: languageProvider.fontFamily,
-      ),
-      locale: languageProvider.locale,
-      supportedLocales: const [Locale('en'), Locale('ar')],
-      localizationsDelegates: [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      localeResolutionCallback: (locale, supportedLocales) {
-        if (locale == null) return supportedLocales.first;
-        for (var supportedLocale in supportedLocales) {
-          if (supportedLocale.languageCode == locale.languageCode) {
-            return supportedLocale;
-          }
-        }
-        return supportedLocales.first;
-      },
-      initialRoute: '/language_theme',
-      routes: {
-        '/language_theme': (context) => LanguageThemeToggleView(),
-        '/choose_user': (context) => ChooseUserTypeView(),
-      },
     );
   }
 }
