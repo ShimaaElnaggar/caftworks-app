@@ -18,4 +18,13 @@ abstract class PreferencesServices {
   static String? getString(String key) => prefs!.getString(key);
   static Future<bool> setString(String key, String value) =>
       prefs!.setString(key, value);
+
+  static Future<void> remove(String s) async {
+    if (prefs!.containsKey(s)) {
+      await prefs!.remove(s);
+      print('Removed key: $s from Shared Preferences');
+    } else {
+      print('Key: $s does not exist in Shared Preferences');
+    }
+  }
 }

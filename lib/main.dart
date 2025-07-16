@@ -1,4 +1,5 @@
 import 'package:craftworks_app/Client/home.dart';
+import 'package:craftworks_app/providers/auth_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'Client/signup.dart';
 import 'package:craftworks_app/l10n/app_localizations.dart';
@@ -18,6 +19,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load();
   await PreferencesServices.initPreferences();
+  final isLoggedIn = await AuthManager.isLoggedIn();
   runApp(
     MultiProvider(
       providers: [
@@ -26,17 +28,19 @@ void main() async {
           create: (_) => LanguageProvider()..loadInitialLanguage(),
         ),
       ],
-      child: const MyApp(),
+      child: MyApp(isLoggedIn: isLoggedIn),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isLoggedIn;
+  const MyApp({super.key, required this.isLoggedIn});
 
   @override
   Widget build(BuildContext context) {
     final languageProvider = Provider.of<LanguageProvider>(context);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Crafworks',
@@ -67,7 +71,7 @@ class MyApp extends StatelessWidget {
         }
         return supportedLocales.first;
       },
-      initialRoute: '/signup',
+      initialRoute: isLoggedIn ? '/home' : '/signup',
       routes: {
         '/': (context) => const OnboardingScreen(),
         '/login': (context) => const LoginScreen(),

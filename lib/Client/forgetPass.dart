@@ -112,7 +112,6 @@ class _ContactSelectionScreen extends StatelessWidget {
   final VoidCallback onNext;
 
   const _ContactSelectionScreen({
-    super.key,
     required this.selectedMethod,
     required this.onSelect,
     required this.onNext,
@@ -231,7 +230,6 @@ class _ContactOption extends StatelessWidget {
   final VoidCallback onTap;
 
   const _ContactOption({
-    super.key,
     required this.icon,
     required this.label,
     required this.detail,
@@ -286,7 +284,6 @@ class _OtpScreen extends StatelessWidget {
   final VoidCallback onVerify;
 
   const _OtpScreen({
-    super.key,
     required this.email,
     required this.timer,
     required this.onResend,
@@ -349,7 +346,7 @@ class _OtpInputField extends StatefulWidget {
   final int length;
   final ValueChanged<String> onChanged;
 
-  const _OtpInputField({super.key, required this.length, required this.onChanged});
+  const _OtpInputField({required this.length, required this.onChanged});
 
   @override
   State<_OtpInputField> createState() => _OtpInputFieldState();

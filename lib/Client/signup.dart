@@ -1,4 +1,5 @@
 import 'package:craftworks_app/services/auth/auth_service.dart';
+import 'package:craftworks_app/services/preferences_services.dart';
 import 'package:flutter/material.dart';
 import '../core/constants/app_theme.dart';
 
@@ -62,7 +63,9 @@ class _SignUpState extends State<SignUp> {
       );
 
       if (res['success']) {
-        Navigator.pushReplacementNamed(context, '/home');
+        final userJson = await PreferencesServices.getString('user');
+        print("User from SharedPreferences (in submitForm): $userJson");
+        // Navigator.pushReplacementNamed(context, '/home');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(res['message'] ?? 'Registration failed')),
@@ -647,8 +650,6 @@ class _CustomTextField extends StatelessWidget {
   final bool obscureText;
   final String? errorText;
   final Function(String)? onChanged;
-  final bool enabled;
-  final TextStyle? textStyle;
 
   const _CustomTextField({
     Key? key,
@@ -659,8 +660,6 @@ class _CustomTextField extends StatelessWidget {
     this.obscureText = false,
     this.errorText,
     this.onChanged,
-    this.enabled = true,
-    this.textStyle,
   }) : super(key: key);
 
   @override
@@ -669,8 +668,6 @@ class _CustomTextField extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       onChanged: onChanged,
-      enabled: enabled,
-      style: textStyle,
       decoration: InputDecoration(
         hintText: hintText,
         prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
@@ -716,8 +713,7 @@ class _SocialButton extends StatelessWidget {
   final String asset;
   final VoidCallback onTap;
 
-  const _SocialButton({Key? key, required this.asset, required this.onTap})
-    : super(key: key);
+  const _SocialButton({super.key, required this.asset, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
