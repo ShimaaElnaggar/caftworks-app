@@ -77,14 +77,20 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
 
-      Navigator.pushReplacementNamed(context, '/home');
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(res['message'] ?? 'Login failed'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      final user = res['user'];
+      final role = user['role'];
+      if (role == 'craftsman') {
+        Navigator.pushReplacementNamed(context, '/craftsman-dashboard');
+      } else if (role == 'client') {
+        Navigator.pushReplacementNamed(context, '/client-home');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(res['message'] ?? 'Login failed'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 

@@ -1,9 +1,9 @@
 import 'package:craftworks_app/Client/home.dart';
 import 'package:craftworks_app/providers/auth_provider.dart';
+import 'package:craftworks_app/views/craftman_categories_view.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'Client/signup.dart';
 import 'package:craftworks_app/l10n/app_localizations.dart';
-import 'package:craftworks_app/views/choose_user_type_view.dart';
 import 'package:craftworks_app/views/language_theme_toggle_view.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:craftworks_app/providers/language_provider.dart';
@@ -14,6 +14,7 @@ import 'client/login.dart';
 import 'Client/forgetPass.dart';
 import 'core/constants/app_theme.dart';
 import 'package:provider/provider.dart';
+import 'package:craftworks_app/views/craftsman_start_options_view.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -71,7 +72,8 @@ class MyApp extends StatelessWidget {
         }
         return supportedLocales.first;
       },
-      initialRoute: isLoggedIn ? '/home' : '/signup',
+      // initialRoute: isLoggedIn ? '/home' : '/signup',
+      initialRoute:  '/craftsman_start',
       routes: {
         '/': (context) => const OnboardingScreen(),
         '/login': (context) => const LoginScreen(),
@@ -79,7 +81,8 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignUp(),
         '/home': (context) => const HomeScreen(),
         '/language_theme': (context) => LanguageThemeToggleView(),
-        '/choose_user': (context) => ChooseUserTypeView(),
+        '/craftsman_start': (context) => CraftsmanStartOptionsView(),
+        '/craftsman_categories': (context) => const CategoriesView(),
       },
     );
   }

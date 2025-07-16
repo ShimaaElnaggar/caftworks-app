@@ -1,26 +1,26 @@
 import 'package:flutter/material.dart';
 
-class UserTypeWidget extends StatelessWidget {
+class CraftsmanOptions extends StatelessWidget {
   final String title;
   final String subTitle;
   final IconData icon;
   final String value;
-  final String selectedRole;
+  final String selectedOption;
   final VoidCallback onTap;
 
-  const UserTypeWidget({
+  const CraftsmanOptions({
     super.key,
     required this.title,
     required this.subTitle,
     required this.icon,
     required this.value,
-    required this.selectedRole,
+    required this.selectedOption,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final bool isSelected = selectedRole == value;
+    final bool isSelected = selectedOption == value;
 
     return GestureDetector(
       onTap: onTap,
