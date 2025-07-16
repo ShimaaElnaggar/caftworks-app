@@ -1,5 +1,5 @@
 import 'package:craftworks_app/Client/home.dart';
-
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'Client/signup.dart';
 import 'package:craftworks_app/l10n/app_localizations.dart';
 import 'package:craftworks_app/views/choose_user_type_view.dart';
@@ -16,6 +16,7 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load();
   await PreferencesServices.initPreferences();
   runApp(
     MultiProvider(

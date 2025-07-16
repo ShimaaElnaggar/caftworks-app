@@ -1,3 +1,4 @@
+import 'package:craftworks_app/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
 import '../core/constants/app_theme.dart';
 
@@ -27,11 +28,12 @@ class _SignUpState extends State<SignUp> {
   String? _confirmPasswordError;
   String? _registerAsError;
 
-  void submitForm() {
+  void submitForm() async {
     if (!agreeToTerms) {
       showTermsDialog();
       return;
     }
+
     setState(() {
       _nameError = _validateName(nameController.text);
       _phoneError = _validatePhone(phoneController.text);
@@ -42,6 +44,7 @@ class _SignUpState extends State<SignUp> {
       );
       _registerAsError = registerAs == null ? 'Please select a role' : null;
     });
+
     if (_nameError == null &&
         _phoneError == null &&
         _emailError == null &&
@@ -49,8 +52,22 @@ class _SignUpState extends State<SignUp> {
         _confirmPasswordError == null &&
         _registerAsError == null) {
       print("Form valid - proceed");
-      // Navigate to HomeScreen after successful sign up
-      Navigator.pushReplacementNamed(context, '/home');
+
+      final res = await AuthService().register(
+        fullName: nameController.text.trim(),
+        email: emailController.text.trim(),
+        phone: phoneController.text.trim(),
+        password: passwordController.text,
+        role: registerAs!,
+      );
+
+      if (res['success']) {
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(res['message'] ?? 'Registration failed')),
+        );
+      }
     }
   }
 
