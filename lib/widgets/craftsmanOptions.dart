@@ -15,7 +15,7 @@ class CraftsmanOptions extends StatelessWidget {
     required this.icon,
     required this.value,
     required this.selectedOption,
-    required this.onTap,
+    required this.onTap, required bool isDark,
   });
 
   @override

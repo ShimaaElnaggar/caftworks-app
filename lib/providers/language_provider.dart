@@ -6,27 +6,39 @@ class LanguageProvider extends ChangeNotifier {
   Locale _locale = const Locale('en');
   String _fontFamily = 'Roboto';
   TextDirection _textDirection = TextDirection.ltr;
+  String _currentLanguageCode = 'en';
 
   Locale get locale => _locale;
   String get fontFamily => _fontFamily;
   TextDirection get textDirection => _textDirection;
+  String get currentLanguage => _currentLanguageCode;
+
+  Future<void> initialize() async {
+    await loadInitialLanguage();
+  }
 
   Future<void> loadInitialLanguage() async {
     if (PreferencesServices.containsKey('languageCode')) {
       final savedLang = PreferencesServices.getString('languageCode');
-      if (savedLang != null) _setLanguage(savedLang);
+      if (savedLang != null) {
+        await _setLanguage(savedLang);
+      }
     } else {
       final deviceLang = PlatformDispatcher.instance.locale.languageCode;
-      _setLanguage(deviceLang);
+      await _setLanguage(deviceLang);
     }
   }
 
   Future<void> setLanguage(String langCode) async {
-    await PreferencesServices.setString('languageCode', langCode);
-    _setLanguage(langCode);
+    if (_currentLanguageCode != langCode) {
+      await PreferencesServices.setString('languageCode', langCode);
+      await _setLanguage(langCode);
+    }
   }
 
-  void _setLanguage(String langCode) {
+  Future<void> _setLanguage(String langCode) async {
+    _currentLanguageCode = langCode;
+    
     if (langCode == 'ar') {
       _locale = const Locale('ar');
       _fontFamily = 'Cairo';
@@ -36,6 +48,12 @@ class LanguageProvider extends ChangeNotifier {
       _fontFamily = 'Roboto';
       _textDirection = TextDirection.ltr;
     }
+    
     notifyListeners();
+  }
+
+  Future<void> toggleLanguage() async {
+    final newLang = _currentLanguageCode == 'en' ? 'ar' : 'en';
+    await setLanguage(newLang);
   }
 }
