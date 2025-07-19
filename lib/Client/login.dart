@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_theme.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'forgetPass.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../l10n/app_localizations.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -19,12 +25,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Email is required';
+      return AppLocalizations.of(context)!.emailRequired;
     }
     
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(value)) {
-      return 'Please enter a valid email address';
+      return AppLocalizations.of(context)!.invalidEmail;
     }
     
     return null;
@@ -32,17 +38,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Password is required';
+      return AppLocalizations.of(context)!.passwordRequired;
     }
     
     if (value.length < 6) {
-      return 'Password must be at least 6 characters long';
+      return AppLocalizations.of(context)!.passwordLength;
     }
     if (!value.contains(RegExp(r'[A-Z]'))) {
-      return 'Password must contain at least one uppercase letter';
+      return AppLocalizations.of(context)!.passwordUppercase;
     }
     if (!value.contains(RegExp(r'[0-9]'))) {
-      return 'Password must contain at least one number';
+      return AppLocalizations.of(context)!.passwordNumber;
     }
     
     return null;
@@ -61,64 +67,62 @@ class _LoginScreenState extends State<LoginScreen> {
       _performLogin();
     }
   }
-  void _performLogin() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Login successful!'),
-        backgroundColor: AppColors.destructive,
-      ),
-    );
-    // Navigate to HomeScreen after successful login
-    Navigator.pushReplacementNamed(context, '/home');
+  void _performLogin() async {
+    final url = Uri.parse('http://192.168.1.2:5000/api/auth/login');
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': _emailController.text.trim(),
+          'password': _passwordController.text,
+          'type': 'clients',
+        }),
+      );
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        // Save token to shared_preferences
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('jwt_token', data['token']);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.loginSuccessful), backgroundColor: AppColors.primary),
+        );
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data['message'] ?? AppLocalizations.of(context)!.loginFailed), backgroundColor: AppColors.destructive),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.network_error + e.toString()), backgroundColor: AppColors.destructive),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      appBar: AppBar(
-      centerTitle: true,
-      title: 
-      Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Text(
-          "Herfa",
-          style: TextStyle(
-        color: AppColors.primary,
-        fontWeight: FontWeight.w700,
-        fontSize: 50,
-        shadows: [
-          Shadow(
-            offset: Offset(3, 3),
-            blurRadius: .8,
-            color: AppColors.primary,
-          ),
-        ],
-          ),
-        ),
-      )
-          
-        ),
       body: Stack(
         children:[
           Positioned(
             top: -100,
-          left: -100,
-          child: Container(
-            width: 200,
-            height: 300,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.blue.withOpacity(.01),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.blue.withOpacity(.3),
-                  blurRadius: 100,
-                  spreadRadius: 100,
-                )
-              ]
-            ),
-          ),),
-
+            left: -100,
+            child: Container(
+              width: 200,
+              height: 300,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: colorScheme.primary.withOpacity(.01),
+                boxShadow: [
+                  BoxShadow(color: colorScheme.primary.withOpacity(.3),
+                    blurRadius: 100,
+                    spreadRadius: 100,
+                  )
+                ]
+              ),
+            ),),
            SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 50,vertical: 200),
@@ -129,27 +133,27 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   const SizedBox(height: 32),
                   Text(
-                    'Sign In',
+                    AppLocalizations.of(context)!.login,
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
-                      color: AppColors.primary
+                      color: colorScheme.primary
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Welcome back !',
+                    AppLocalizations.of(context)!.welcomeBack,
                     style: TextStyle(
                       fontSize: 14,
-                      color: AppColors.mutedForeground,
+                      color: colorScheme.onBackground.withOpacity(0.7),
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 32),
                   _CustomTextField(
                     controller: _emailController,
-                    hintText: 'Email',
+                    hintText: AppLocalizations.of(context)!.email,
                     prefixIcon: Icons.email_outlined,
                     errorText: _emailError,
                     onChanged: (value) {
@@ -163,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 16),
                   _CustomTextField(
                     controller: _passwordController,
-                    hintText: 'Password',
+                    hintText: AppLocalizations.of(context)!.password,
                     prefixIcon: Icons.lock_outline,
                     obscureText: _obscurePassword,
                     errorText: _passwordError,
@@ -175,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       }
                     },
                     suffixIcon: IconButton(
-                      icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+                      icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility, color: colorScheme.primary),
                       onPressed: () {
                         setState(() {
                           _obscurePassword = !_obscurePassword;
@@ -193,14 +197,16 @@ class _LoginScreenState extends State<LoginScreen> {
                             _rememberMe = value ?? false;
                           });
                         },
+                        activeColor: colorScheme.primary,
+                        checkColor: colorScheme.onPrimary,
                       ),
-                      const Text('Remember me'),
+                      Text(AppLocalizations.of(context)!.rememberMe, style: TextStyle(color: colorScheme.onBackground)),
                     ],
                   ),
                   const SizedBox(height: 8),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: colorScheme.primary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -208,8 +214,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     onPressed: _handleSubmit,
                     child: Text(
-                      'Sign in',
-                      style: TextStyle(fontSize: 18, color: AppColors.primaryForeground),
+                      AppLocalizations.of(context)!.signIn,
+                      style: TextStyle(fontSize: 18, color: colorScheme.onPrimary),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -218,45 +224,45 @@ class _LoginScreenState extends State<LoginScreen> {
                       Navigator.pushNamed(context, '/forgetpass');
                     },
                     child: Text(
-                      'Forgot password',
-                      style: TextStyle(color: AppColors.primary),
+                      AppLocalizations.of(context)!.forgot_password,
+                      style: TextStyle(color: colorScheme.primary),
                     ),
                   ),
                   const SizedBox(height: 16),
                   Row(
-                    children: const [
-                      Expanded(child: Divider()),
+                    children: [
+                      const Expanded(child: Divider()),
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text('Continue with'),
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(AppLocalizations.of(context)!.continueWith, style: TextStyle(color: colorScheme.onBackground)),
                       ),
-                      Expanded(child: Divider()),
+                      const Expanded(child: Divider()),
                     ],
                   ),
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _SocialButton(asset: 'assets/images/Social Button.png', onTap: () {}),
+                      _SocialButton(asset: 'assets/images/Social Button.png', onTap: () {}, colorScheme: colorScheme),
                       const SizedBox(width: 16),
-                      _SocialButton(asset: 'assets/images/Social Buttonface.png', onTap: () {}),
+                      _SocialButton(asset: 'assets/images/Social Buttonface.png', onTap: () {}, colorScheme: colorScheme),
                       const SizedBox(width: 16),
-                      _SocialButton(asset: 'assets/images/Social Buttoni.png', onTap: () {}),
+                      _SocialButton(asset: 'assets/images/APP.png', onTap: () {}, colorScheme: colorScheme),
                     ],
                   ),
                   const SizedBox(height: 32),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Don't have an account ? "),
+                      Text(AppLocalizations.of(context)!.dontHaveAccount, style: TextStyle(color: colorScheme.onBackground)),
                       GestureDetector(
                         onTap: () {
                           Navigator.pushNamed(context, '/signup');
                         },
                         child: Text(
-                          'sign up',
+                          AppLocalizations.of(context)!.signup,
                           style: TextStyle(
-                            color: AppColors.primary,
+                            color: colorScheme.primary,
                           ),
                         ),
                       ),
@@ -266,28 +272,25 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
-          
         ),
-                  Positioned(
-            // top: 100,
-            bottom: -100,
-            right: -100,
-            child: Container(
+        Positioned(
+          bottom: -100,
+          right: -100,
+          child: Container(
             width: 200,
             height: 500,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.primary.withOpacity(.01),
+              color: colorScheme.primary.withOpacity(.01),
               boxShadow: [
-                BoxShadow(color: AppColors.primary.withOpacity(.3),
-                blurRadius: 150,
-                spreadRadius: 100,
+                BoxShadow(color: colorScheme.primary.withOpacity(.3),
+                  blurRadius: 150,
+                  spreadRadius: 100,
                 )
-
               ]
             ),
-
-          )),
+          ),
+        ),
       ]
       ),
     );
@@ -316,13 +319,14 @@ class _CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return TextField(
       controller: controller,
       obscureText: obscureText,
       onChanged: onChanged,
       decoration: InputDecoration(
         hintText: hintText,
-        prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
+        prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: colorScheme.primary) : null,
         suffixIcon: suffixIcon,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -330,30 +334,30 @@ class _CustomTextField extends StatelessWidget {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: errorText != null ? AppColors.destructive : AppColors.muted,
+            color: errorText != null ? colorScheme.error : colorScheme.outline,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(
-            color: errorText != null ? AppColors.destructive : AppColors.primary,
+            color: errorText != null ? colorScheme.error : colorScheme.primary,
             width: 2,
           ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.destructive),
+          borderSide: BorderSide(color: colorScheme.error),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.destructive, width: 2),
+          borderSide: BorderSide(color: colorScheme.error, width: 2),
         ),
         filled: true,
-        fillColor: AppColors.foreground,
+        fillColor: colorScheme.surface,
         contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         errorText: errorText,
         errorStyle: TextStyle(
-          color: AppColors.destructive,
+          color: colorScheme.error,
           fontSize: 12,
         ),
       ),
@@ -364,8 +368,9 @@ class _CustomTextField extends StatelessWidget {
 class _SocialButton extends StatelessWidget {
   final String asset;
   final VoidCallback onTap;
+  final ColorScheme colorScheme;
 
-  const _SocialButton({Key? key, required this.asset, required this.onTap}) : super(key: key);
+  const _SocialButton({Key? key, required this.asset, required this.onTap, required this.colorScheme}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -375,7 +380,7 @@ class _SocialButton extends StatelessWidget {
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          border: Border.all(color: AppColors.muted),
+          border: Border.all(color: colorScheme.outline),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Image.asset(asset, width: 28, height: 28),

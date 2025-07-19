@@ -8,7 +8,7 @@ class AppFonts {
     fontFamily: primaryFont,
     fontSize: 24,
     fontWeight: FontWeight.bold,
-    color: Colors.black,
+    color: AppColors.primary,
   );
 
   static const TextStyle heading2 = TextStyle(
@@ -22,13 +22,13 @@ class AppFonts {
     fontFamily: primaryFont,
     fontSize: 16,
     fontWeight: FontWeight.normal,
-    color: Colors.black87,
+    color: AppColors.foreground,
   );
 
   static const TextStyle caption = TextStyle(
     fontFamily: primaryFont,
     fontSize: 12,
     fontWeight: FontWeight.w300,
-    color: Colors.grey,
+    color: AppColors.mutedForeground,
   );
 }

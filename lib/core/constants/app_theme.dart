@@ -78,3 +78,51 @@ class AppColors {
   static const infoForegroundLight = Color(0xFFFFFFFF);
   static const ringLight = Color(0xFF5865F2);
 }
+
+final ThemeData lightTheme = ThemeData(
+  brightness: Brightness.light,
+  scaffoldBackgroundColor: AppColors.backgroundLight,
+  cardColor: AppColors.cardLight,
+  primaryColor: AppColors.primaryLight,
+  colorScheme: ColorScheme.light(
+    primary: AppColors.primaryLight,
+    secondary: AppColors.secondaryLight,
+    background: AppColors.backgroundLight,
+    surface: AppColors.cardLight,
+    error: AppColors.destructiveLight,
+    onPrimary: AppColors.primaryForegroundLight,
+    onSecondary: AppColors.secondaryForegroundLight,
+    onBackground: AppColors.foregroundLight,
+    onSurface: AppColors.cardForegroundLight,
+    onError: AppColors.destructiveForegroundLight,
+  ),
+  textTheme: const TextTheme(
+    bodyLarge: TextStyle(color: AppColors.foregroundLight),
+    bodyMedium: TextStyle(color: AppColors.foregroundLight),
+    bodySmall: TextStyle(color: AppColors.mutedForegroundLight),
+  ),
+);
+
+final ThemeData darkTheme = ThemeData(
+  brightness: Brightness.dark,
+  scaffoldBackgroundColor: AppColors.background,
+  cardColor: AppColors.card,
+  primaryColor: AppColors.primary,
+  colorScheme: ColorScheme.dark(
+    primary: AppColors.primary,
+    secondary: AppColors.secondary,
+    background: AppColors.background,
+    surface: AppColors.card,
+    error: AppColors.destructive,
+    onPrimary: AppColors.primaryForeground,
+    onSecondary: AppColors.secondaryForeground,
+    onBackground: AppColors.foreground,
+    onSurface: AppColors.cardForeground,
+    onError: AppColors.destructiveForeground,
+  ),
+  textTheme: const TextTheme(
+    bodyLarge: TextStyle(color: AppColors.foreground),
+    bodyMedium: TextStyle(color: AppColors.foreground),
+    bodySmall: TextStyle(color: AppColors.mutedForeground),
+  ),
+);

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import '../core/constants/app_theme.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../../l10n/app_localizations.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
   const ForgetPasswordScreen({Key? key}) : super(key: key);
@@ -38,34 +41,42 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
     });
   }
 
+  void _submitForgotPassword(String email) async {
+    final url = Uri.parse('http://192.168.1.2:5000/api/auth/forgot-password');
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email.trim()}),
+      );
+      final data = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.password_reset_email_sent), backgroundColor: AppColors.primary),
+        );
+      
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(data['message'] ?? AppLocalizations.of(context)!.failed_to_send_reset_email), backgroundColor: AppColors.destructive),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.network_error + e.toString()), backgroundColor: AppColors.destructive),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
-              centerTitle: true,
-      title: 
-      Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Text(
-          "Herfa",
-          style: TextStyle(
-        color: AppColors.primary,
-        fontWeight: FontWeight.w700,
-        fontSize: 50,
-        shadows: [
-          Shadow(
-            offset: Offset(3, 3),
-            blurRadius: .8,
-            color: AppColors.primary,
-          ),
-        ],
-          ),
-        ),
-      ),
-        backgroundColor: AppColors.foreground,
+        backgroundColor: colorScheme.background,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: AppColors.foreground),
+          icon: Icon(Icons.arrow_back, color: colorScheme.onBackground),
           onPressed: () {
             if (_showOtpScreen) {
               setState(() {
@@ -120,27 +131,28 @@ class _ContactSelectionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Stack(
       children:[ 
-                 Positioned(
-            top: -100,
+        Positioned(
+          top: -100,
           left: -100,
           child: Container(
             width: 200,
             height: 200,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.primary.withOpacity(.01),
+              color: colorScheme.primary.withOpacity(.01),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(.3),
+                  color: colorScheme.primary.withOpacity(.3),
                   blurRadius: 100,
                   spreadRadius: 100,
                 )
               ]
             ),
           ),),
-
         Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
         child: Column(
@@ -153,18 +165,18 @@ class _ContactSelectionScreen extends StatelessWidget {
                 'assets/images/forget.png',
                 height: 140,
                 fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) => Icon(Icons.lock, size: 100, color: AppColors.primary),
+                errorBuilder: (context, error, stackTrace) => Icon(Icons.lock, size: 100, color: colorScheme.primary),
               ),
             ),
             const SizedBox(height: 24),
-            const Text(
-              'Select which contact details should we use to reset your Password',
-              style: TextStyle(fontSize: 16),
+            Text(
+              AppLocalizations.of(context)!.select_contact_details_to_reset_password,
+              style: TextStyle(fontSize: 16, color: colorScheme.onBackground),
             ),
             const SizedBox(height: 24),
             _ContactOption(
               icon: Icons.sms,
-              label: 'Via SMS',
+              label: AppLocalizations.of(context)!.via_sms,
               value: 1,
               selected: selectedMethod == 1,
               detail: '+21365*****52',
@@ -173,7 +185,7 @@ class _ContactSelectionScreen extends StatelessWidget {
             const SizedBox(height: 16),
             _ContactOption(
               icon: Icons.email,
-              label: 'Via Email',
+              label: AppLocalizations.of(context)!.via_email,
               value: 2,
               selected: selectedMethod == 2,
               detail: 'khad****@gmail.com',
@@ -184,40 +196,38 @@ class _ContactSelectionScreen extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: colorScheme.primary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 onPressed: onNext,
-                child: Text('Next', style: TextStyle(fontSize: 18, color: AppColors.primaryForeground)),
+                child: Text(AppLocalizations.of(context)!.next, style: TextStyle(fontSize: 18, color: colorScheme.onPrimary)),
               ),
             ),
             const SizedBox(height: 16),
           ],
         ),
       ),
-                      Positioned(
-            bottom: -100,
-            right: -100,
-            child: Container(
-            width: 200,
-            height: 500,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.blue.withOpacity(.01),
-              boxShadow: [
-                BoxShadow(color:Colors.blue..withOpacity(.6),
+      Positioned(
+        bottom: -100,
+        right: -100,
+        child: Container(
+          width: 200,
+          height: 500,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: colorScheme.primary.withOpacity(.01),
+            boxShadow: [
+              BoxShadow(color: colorScheme.primary.withOpacity(.6),
                 blurRadius: 150,
                 spreadRadius: 100,
-                )
-
-              ]
-            ),
-
-          )),
-
+              )
+            ]
+          ),
+        )
+      ),
     ]);
   }
 }
@@ -242,35 +252,36 @@ class _ContactOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: selected ? AppColors.accent : AppColors.foreground,
+          color: selected ? colorScheme.secondary : colorScheme.surface,
           border: Border.all(
-            color: selected ? AppColors.primary : AppColors.mutedForegroundLight,
+            color: selected ? colorScheme.primary : colorScheme.outline,
             width: selected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           children: [
-            Icon(icon, color: selected ? AppColors.primary : AppColors.mutedForeground),
+            Icon(icon, color: selected ? colorScheme.primary : colorScheme.onSurface),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-                  Text(detail, style: TextStyle(color: AppColors.mutedForeground)),
+                  Text(label, style: TextStyle(fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
+                  Text(detail, style: TextStyle(color: colorScheme.onSurface.withOpacity(0.7))),
                 ],
               ),
             ),
             if (selected)
-              Icon(Icons.check_circle, color: AppColors.primary)
+              Icon(Icons.check_circle, color: colorScheme.primary)
             else
-              Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.mutedForeground),
+              Icon(Icons.arrow_forward_ios, size: 16, color: colorScheme.onSurface),
           ],
         ),
       ),
@@ -296,20 +307,21 @@ class _OtpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 16),
-          const Text(
-            'OTP Code Verification',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          Text(
+            AppLocalizations.of(context)!.otp_code_verification,
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: colorScheme.onBackground),
           ),
           const SizedBox(height: 16),
           Text(
-            'code has been sent to $email',
-            style: const TextStyle(fontSize: 16),
+            AppLocalizations.of(context)!.code_sent_to + email,
+            style: TextStyle(fontSize: 16, color: colorScheme.onBackground),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
@@ -319,24 +331,24 @@ class _OtpScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           timer > 0
-              ? Text('Resend the code in $timer s', style: TextStyle(color: AppColors.mutedForeground))
+              ? Text(AppLocalizations.of(context)!.resend_code_in + timer.toString() + 's', style: TextStyle(color: colorScheme.onBackground.withOpacity(0.7)))
               : TextButton(
                   onPressed: onResend,
-                  child: const Text('Resend the code'),
+                  child: Text(AppLocalizations.of(context)!.resend_code, style: TextStyle(color: colorScheme.primary)),
                 ),
           const SizedBox(height: 32),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
+                backgroundColor: colorScheme.primary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
               onPressed: onVerify,
-              child: Text('Verify', style: TextStyle(fontSize: 18, color: AppColors.primaryForeground)),
+              child: Text(AppLocalizations.of(context)!.verify, style: TextStyle(fontSize: 18, color: colorScheme.onPrimary)),
             ),
           ),
         ],
@@ -384,6 +396,7 @@ class _OtpInputFieldState extends State<_OtpInputField> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(widget.length, (i) {
@@ -396,10 +409,21 @@ class _OtpInputFieldState extends State<_OtpInputField> {
             keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
             maxLength: 1,
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            decoration: const InputDecoration(
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: colorScheme.onBackground),
+            decoration: InputDecoration(
               counterText: '',
-              border: OutlineInputBorder(),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: colorScheme.outline),
+              ),
+              filled: true,
+              fillColor: colorScheme.surface,
+              contentPadding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+              errorText: null,
+              errorStyle: TextStyle(
+                color: colorScheme.error,
+                fontSize: 12,
+              ),
             ),
             onChanged: (value) {
               if (value.isNotEmpty && i < widget.length - 1) {

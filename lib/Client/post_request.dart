@@ -29,20 +29,20 @@ class _PostRequestPageState extends State<PostRequestPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.backgroundLight,
+        backgroundColor: AppColors.foreground,
         elevation: 0,
         centerTitle: true,
         title: const Text(
           'Post Request',
           style: TextStyle(
-            color: AppColors.primary900Light,
+            color: AppColors.primary,
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
         ),
-        iconTheme: const IconThemeData(color: AppColors.primary900Light),
+        iconTheme: const IconThemeData(color: AppColors.primary),
       ),
-      backgroundColor: AppColors.backgroundLight,
+      backgroundColor: AppColors.foreground,
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Column(
@@ -54,7 +54,7 @@ class _PostRequestPageState extends State<PostRequestPage> {
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
-                color: AppColors.primary900Light,
+                color: AppColors.primary,
               ),
             ),
             const SizedBox(height: 8),
@@ -65,7 +65,7 @@ class _PostRequestPageState extends State<PostRequestPage> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
-                    color: AppColors.cardLight,
+                    color: AppColors.card,
                     image: const DecorationImage(
                       image: AssetImage('assets/images/imageboarding2.png'),
                       fit: BoxFit.cover,
@@ -159,7 +159,7 @@ class _PostRequestPageState extends State<PostRequestPage> {
                 labelText: 'Service',
                 hintText: 'Choose service category',
                 filled: true,
-                fillColor: AppColors.cardLight,
+                fillColor: AppColors.card,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
@@ -198,7 +198,7 @@ class _PostRequestPageState extends State<PostRequestPage> {
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryLight,
+                  backgroundColor: AppColors.primary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -207,7 +207,7 @@ class _PostRequestPageState extends State<PostRequestPage> {
                 child: const Text(
                   'Submit Request',
                   style: TextStyle(
-                    color: AppColors.primaryForegroundLight,
+                    color: AppColors.primaryForeground,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
@@ -240,9 +240,9 @@ class _PostRequestPageState extends State<PostRequestPage> {
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        prefixIcon: icon != null ? Icon(icon, color: AppColors.primaryLight) : null,
+        prefixIcon: icon != null ? Icon(icon, color: AppColors.primary) : null,
         filled: true,
-        fillColor: AppColors.cardLight,
+        fillColor: AppColors.card,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
